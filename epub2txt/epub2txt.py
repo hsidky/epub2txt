@@ -63,19 +63,35 @@ def fillin_title(ilist):
     return lst
 
 
+def remove_footnote_elements_flexible(root):
+    """Remove footnote elements from the HTML tree.
+
+    Find elements where class contains 'footnote-hr' or 'footnote'
+    and remove them from the tree.
+    """
+    elements_to_remove = root.xpath("//*[contains(@class, 'footnote-hr') or contains(@class, 'footnote')]")
+
+    for elem in elements_to_remove:
+        parent = elem.getparent()
+        if parent is not None:
+            parent.remove(elem)
+
+
 # fmt: off
-@with_func_attrs(title="", toc="", toc_titles="", toc_hrefs="", toc_uids="", spine="", metadata="")
+@with_func_attrs(title="", toc="", toc_titles="", toc_hrefs="", toc_uids="", spine="", metadata="", names="")
 def epub2txt(
         filepath: Union[str, Path],
         clean: bool = True,
         outputlist: bool = False,
         debug: bool = False,
+        remove_footnotes: bool = False,
 ) -> Union[str, List[str]]:
     # fmt: on
     """Convert epub to text.
 
     outputlist: if set to True, output List[str] according to book.spine
     clean: remove blank lines if set to True
+    remove_footnotes: if set to True, remove footnote elements in the HTML
 
     list of ebooklib.epub.EpuNav/ebooklib.epub.EpubHtml
     [book.get_item_with_id(elm) for elm in book.spine]
@@ -169,6 +185,11 @@ def epub2txt(
     for content in contents:
         # root = etree.XML(content)
         root = etree.XML(content, parser=parser)
+
+        # Remove footnotes if requested
+        if remove_footnotes:
+            remove_footnote_elements_flexible(root)
+
         tree = etree.ElementTree(root)
         text = tree.xpath("string()")
         texts.append(text)

@@ -45,6 +45,7 @@ flags.DEFINE_boolean(
 flags.DEFINE_boolean("info", False, "print book info and exit", short_name="i")
 flags.DEFINE_boolean("debug", False, "print verbose debug messages")
 flags.DEFINE_boolean("version", False, "print version and exit", short_name="V")
+flags.DEFINE_boolean("remove-footnotes", False, "remove footnote elements from the text", short_name="n")
 
 
 def proc_argv(_):  # pylint: disable=too-many-branches  # noqa: C901
@@ -123,6 +124,7 @@ def proc_argv(_):  # pylint: disable=too-many-branches  # noqa: C901
         text = epub2txt(
             FLAGS.filename,
             debug=FLAGS.debug,
+            remove_footnotes=FLAGS.remove_footnotes,
         )
     except Exception as exc:
         logger.error("epub2txt exc: %s", exc)
