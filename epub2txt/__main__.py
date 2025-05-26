@@ -124,7 +124,7 @@ def proc_argv(_):  # pylint: disable=too-many-branches  # noqa: C901
         text = epub2txt(
             FLAGS.filename,
             debug=FLAGS.debug,
-            remove_footnotes=FLAGS.remove_footnotes,
+            remove_footnotes=FLAGS.n,
         )
     except Exception as exc:
         logger.error("epub2txt exc: %s", exc)
